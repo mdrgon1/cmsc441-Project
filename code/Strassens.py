@@ -10,6 +10,7 @@ def split_matrix(m):
     return m[:midx, :midy], m[:midx, midy:], m[midx:, :midy], m[midx:, midy:]
 
 
+# A and B are square matrices, returns C = A * B
 def strassens(A, B):
 
     # base case, matrices are 1x1

@@ -2,7 +2,7 @@
 import numpy as np
 
 
-# A and B are square matrices
+# A and B are square matrices, returns C = A * B
 def multiply(A, B):
     n, m = A.shape
 
