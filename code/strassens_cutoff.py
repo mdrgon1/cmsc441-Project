@@ -6,6 +6,14 @@ import standard
 # performs strassens multiplication algorithm, switches to standard at cutoff k
 def strassens_cutoff(A, B, k):
 
+    # ensure dimensions are a power of 2
+    n, m = A.shape
+    dim = int(np.ceil(np.log2(n)))
+    dim = 1 << dim
+    if dim != n:
+        A = np.pad(A, ((0, dim - n), (0, dim - n)), 'constant', constant_values=0)
+        B = np.pad(B, ((0, dim - n), (0, dim - n)), 'constant', constant_values=0)
+
     # base case, matrices are 1x1
     if len(A) == 1 or len(B) == 1:
         return 1
@@ -32,4 +40,4 @@ def strassens_cutoff(A, B, k):
 
     c = np.vstack((np.hstack((c11, c12)), np.hstack((c21, c22))))
 
-    return c
+    return c[:n, :m]

@@ -6,13 +6,14 @@ import numpy as np
 def multiply(A, B):
     n, m = A.shape
 
-    C = np.array([])
-    np.reshape(C, (n, n))
+    C = np.ndarray((n, m))
 
     for i in range(n):
         for j in range(n):
             C[i][j] = 0
             for k in range(n):
-                C[i][j] += A[i][k] * B[k][j]
+                a = A[i][k]
+                b = B[k][j]
+                C[i][j] += a * b
 
     return C

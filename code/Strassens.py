@@ -13,9 +13,17 @@ def split_matrix(m):
 # A and B are square matrices, returns C = A * B
 def strassens(A, B):
 
+    # ensure dimensions are a power of 2
+    n, m = A.shape
+    dim = int(np.ceil(np.log2(n)))
+    dim = 1 << dim
+    if dim != n:
+        A = np.pad(A, ((0, dim - n), (0, dim - n)), 'constant', constant_values=0)
+        B = np.pad(B, ((0, dim - n), (0, dim - n)), 'constant', constant_values=0)
+
     # base case, matrices are 1x1
     if len(A) == 1 or len(B) == 1:
-        return 1
+        return np.array([A[0][0] * B[0][0]])
 
     a, b, c, d = split_matrix(A)
     e, f, g, h = split_matrix(B)
@@ -33,6 +41,8 @@ def strassens(A, B):
     c21 = p3 + p4
     c22 = p1 + p5 - p3 - p7
 
-    c = np.vstack((np.hstack((c11, c12)), np.hstack((c21, c22))))
+    h1 = np.hstack((c11, c12))
+    h2 = np.hstack((c21, c22))
+    c = np.vstack((h1, h2))
 
-    return c
+    return c[:n, :m]
