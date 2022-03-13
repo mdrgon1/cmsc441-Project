@@ -1,0 +1,2 @@
+D:\Users\Default\Documents\School stuff\CMSC441\Project\cpp-project\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
+D:\Users\Default\Documents\School stuff\CMSC441\Project\cpp-project\ConsoleApplication1\x64\Debug\ConsoleApplication1.pdb

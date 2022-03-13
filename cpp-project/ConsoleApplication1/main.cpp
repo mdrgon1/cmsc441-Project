@@ -5,25 +5,46 @@
 
 using namespace std;
 
+const int N = 5;
+
 int main() {
-    int bam_samples[] = { 10, 20, 30, 40 };
-    int samk_samples[] = { 128 };
 
-    float* mean_samk = new float[1];
-    float* std_dev_samk = new float[1];
-    time_usage_samk(samk_samples, 1, 0, mean_samk, std_dev_samk);
+    int yuh;
+    cout << "press enter to start" << endl;
+    cin >> yuh;
+    std::cout << "memory: " << get_memory() << endl;
 
-    float* mean_bam = new float[4];
-    float* std_dev_bam = new float[4];
-    time_usage_bam(bam_samples, 4, mean_bam, std_dev_bam);
+    int bam_samples[] = { 2, 4, 8, 16, 32, 64, 128, 512 };
+    int samk_samples[] = { 2, 4, 8, 16, 32, 64, 128, 512 };
+
+    float* mean_samk = new float[N];
+    float* std_dev_samk = new float[N];
+    time_usage_samk(samk_samples, N, 32, mean_samk, std_dev_samk);
+
+    float* mean_bam = new float[N];
+    float* std_dev_bam = new float[N];
+    time_usage_bam(bam_samples, N, mean_bam, std_dev_bam);
 
     std::cout << "sam_times" << endl;
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < N; i++)
         std::cout << mean_samk[i] << ",";
     std::cout << endl;
 
     std::cout << "bam_times" << endl;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < N; i++)
         std::cout << mean_bam[i] << ",";
     std::cout << endl;
+
+    std::cout << "memory: " << get_memory() << endl;
+
+    delete[] mean_samk;
+    delete[] std_dev_samk;
+
+    delete[] mean_bam;
+    delete[] std_dev_bam;
+
+    std::cout << "memory: " << get_memory() << endl;
+    //_CrtDumpMemoryLeaks();
+
+    return 0;
 }

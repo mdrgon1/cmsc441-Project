@@ -1,4 +1,7 @@
 #pragma once
+
+void delete_matrix(float** M, int n);
+
 void print_matrix(float** M, int n);
 
 void add(float** A, float** B, float**& C, int n);
@@ -13,4 +16,5 @@ void init_matrix(float**& M, int n);
 
 void bam(float** A, float** B, float**& C, int n);
 
-void samk(float** A, float** B, float**& C, int n, int k);
+template <int n>
+void samk(float** A, float** B, float**& C, int k);
