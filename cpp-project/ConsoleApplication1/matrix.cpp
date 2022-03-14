@@ -1,7 +1,7 @@
 #include <iostream>
 #include "matrix.h"
 #include "testing.h"
-#define MEASURE_SPACE
+//#define update_max_memory()
 
 using namespace std;
 
@@ -71,6 +71,7 @@ void init_matrix(float**& M, int n) {
 }
 
 void bam(float** A, float** B, float**& C, int n) {
+    update_max_memory();
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -82,23 +83,18 @@ void bam(float** A, float** B, float**& C, int n) {
             }
         }
     }
-#ifdef MEASURE_SPACE
     update_max_memory();
-#endif
 }
-
 
 void samk(float** A, float** B, float**& C, int n, int k) {
     
-    
+    update_max_memory();
     if (n == 1) {
-#ifdef MEASURE_SPACE
-        update_max_memory();
-#endif
         C[0][0] = A[0][0] * B[0][0];
         return;
     }
     else if (n <= k) {
+        update_max_memory();
         bam(A, B, C, n);
         return;
     }
@@ -133,6 +129,8 @@ void samk(float** A, float** B, float**& C, int n, int k) {
     sub(s[0], s[2], m[8], n / 2);
     add(s[4], s[5], m[9], n / 2);
 
+    update_max_memory();
+
     delete_matrix(s[1], n / 2);
     delete_matrix(s[2], n / 2);
     delete_matrix(s[5], n / 2);
@@ -142,30 +140,37 @@ void samk(float** A, float** B, float**& C, int n, int k) {
     for (int i = 0; i < 7; i++)
         init_matrix(p[i], n / 2);
     samk(s[0], m[0], p[0], n / 2, k);
+    update_max_memory();
     delete_matrix(s[0], n/2);
     delete_matrix(m[0], n / 2);
 
     samk(m[1], s[7], p[1], n / 2, k);
+    update_max_memory();
     delete_matrix(m[1], n / 2);
     delete_matrix(s[7], n / 2);
 
     samk(m[2], s[4], p[2], n / 2, k);
+    update_max_memory();
     delete_matrix(m[2], n / 2);
     delete_matrix(s[4], n / 2);
 
     samk(s[3], m[3], p[3], n / 2, k);
+    update_max_memory();
     delete_matrix(s[3], n / 2);
     delete_matrix(m[3], n / 2);
 
     samk(m[4], m[5], p[4], n / 2, k);
+    update_max_memory();
     delete_matrix(m[4], n / 2);
     delete_matrix(m[5], n / 2);
 
     samk(m[6], m[7], p[5], n / 2, k);
+    update_max_memory();
     delete_matrix(m[6], n / 2);
     delete_matrix(m[7], n / 2);
 
     samk(m[8], m[9], p[6], n / 2, k);
+    update_max_memory();
     delete_matrix(m[8], n / 2);
     delete_matrix(m[9], n / 2);
 
@@ -183,7 +188,7 @@ void samk(float** A, float** B, float**& C, int n, int k) {
     add(p[0], p[4], c[3], n / 2);
     sub(c[3], p[2], c[3], n / 2);
     sub(c[3], p[6], c[3], n / 2);
-
+    update_max_memory();
     for (int i = 0; i < 7; i++)
         delete_matrix(p[i], n / 2);
 
@@ -195,6 +200,7 @@ void samk(float** A, float** B, float**& C, int n, int k) {
             C[i + n / 2][j + n / 2] = c[3][i][j];
         }
     }
+    update_max_memory();
     for (int i = 0; i < 4; i++)
         delete_matrix(c[i], n / 2);
 }

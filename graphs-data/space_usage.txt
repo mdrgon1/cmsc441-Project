@@ -1,0 +1,13 @@
+samk mean space usage
+0,0,409.6,0,2048,5324.8,77004.8,1.8858e+06,
+samk space std devs
+0,0,1228.8,0,6144,12430.5,48145,154373,
+sam mean space usage
+0,0,0,2048,37273.6,175718,590643,2.64643e+06,
+sam space std devs
+0,0,0,3302.3,12750.3,13640.4,197211,125841,
+bam mean space usage
+0,0,0,0,1638.4,5734.4,8192,75366.4,
+bam space std devs
+0,0,0,0,4915.2,14677.2,24576,205186,
+SPACE MEASURED IN BYTES
