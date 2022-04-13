@@ -5,18 +5,18 @@
 
 using namespace std;
 
-void delete_matrix(float** M, int n) {
+void delete_matrix_data(float** M, int n) {
     for (int i = 0; i < n; i++) {
         delete[] M[i];
     }
     delete[] M;
 }
 
-void print_matrix(float** M, int n) {
-    for (int i = 0; i < n; i++) {
+void print_matrix(MatrixWrapper M) {
+    for (int i = M._yfrom; i < M._yto; i++) {
         cout << "|";
-        for (int j = 0; j < n; j++) {
-            cout << M[j][i];
+        for (int j = M._xfrom; j < M._xto; j++) {
+            cout << M._data[j][i];
             cout << "|";
         }
         cout << endl;
@@ -24,33 +24,43 @@ void print_matrix(float** M, int n) {
     cout << endl;
 }
 
-void add(float** A, float** B, float**& C, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j] + B[i][j];
+void add(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C) {
+    if (A._width != C._width || A._height != C._height || B._width != B._width || B._height != C._height)
+        throw "matrices have mismatched dimensions!";
+    int width = A._width;
+    int height = A._height;
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            C._data[C._xfrom + i][C._yfrom + j] = A._data[A._xfrom + i][A._yfrom + j] + B._data[B._xfrom + i][B._yfrom + j];
         }
     }
 }
 
-void sub(float** A, float** B, float**& C, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j] - B[i][j];
+void sub(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C) {
+    if (A._width != C._width || A._height != C._height || B._width != B._width || B._height != C._height)
+        throw "matrices have mismatched dimensions!";
+    int width = A._width;
+    int height = A._height;
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            C._data[C._xfrom + i][C._yfrom + j] = A._data[A._xfrom + i][A._yfrom + j] - B._data[B._xfrom + i][B._yfrom + j];
         }
     }
 }
 
-bool compare(float** A, float** B, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (A[i][j] != B[i][j])
+bool compare(MatrixWrapper A, MatrixWrapper B) {
+    if (A._width != B._width || A._height != B._height)
+        throw "matrices have mismatched dimensions!";
+    for (int i = A._yfrom; i < A._yto; i++) {
+        for (int j = A._xfrom; j < A._xto; j++) {
+            if (A._data[i][j] != B._data[i][j])
                 return false;
         }
     }
     return true;
 }
 
-void randomize_matrix(float**& M, int n) {
+void randomize_matrix_data(float**& M, int n) {
     M = new float* [n];
     for (int i = 0; i < n; i++) {
         M[i] = new float[n];
@@ -60,7 +70,7 @@ void randomize_matrix(float**& M, int n) {
     }
 }
 
-void init_matrix(float**& M, int n) {
+void init_matrix_data(float**& M, int n) {
     M = new float* [n];
     for (int i = 0; i < n; i++) {
         M[i] = new float[n];
@@ -70,22 +80,162 @@ void init_matrix(float**& M, int n) {
     }
 }
 
-void bam(float** A, float** B, float**& C, int n) {
+MatrixWrapper init_matrix_wrapper(int n) {
+    float** data;
+    init_matrix_data(data, n);
+    MatrixWrapper M(data, n);
+    return M;
+}
+
+void bam(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C) {
     update_max_memory();
-    for (int i = 0; i < n; i++)
+    if (A._height != C._height || B._width != C._width || A._width != B._height)
+        throw "matrices have mismatched dimensions!";
+    for (int i = 0; i < B._width; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < A._width; j++)
         {
-            C[i][j] = 0.0;
-            for (int k = 0; k < n; k++)
+            C._data[C._xfrom + i][C._yfrom + j] = 0.0;
+            for (int k = 0; k < A._width; k++)
             {
-                C[i][j] += A[k][j] * B[i][k];
+                C._data[C._xfrom + i][C._yfrom + j] += A._data[A._xfrom + k][A._yfrom + j] * B._data[B._xfrom + i][B._yfrom + k];
             }
         }
     }
+
     update_max_memory();
 }
 
+void sam(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C) {
+    samk(A, B, C, 0);
+}
+
+void samk(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C, int k) {
+    if (A._width != C._width || A._height != C._height || B._width != B._width || B._height != C._height)
+        throw "dimension mismatch!";
+    if (C._width != C._height)
+        throw "samk must be given square matrices";
+    int n = A._width;
+    update_max_memory();
+    if (n == 1) {
+        C._data[C._xfrom][C._yfrom] = A._data[A._xfrom][A._yfrom] * B._data[B._xfrom][B._yfrom];
+        return;
+    }
+    else if (n <= k) {
+        update_max_memory();
+        bam(A, B, C);
+        return;
+    }
+    int mid = n / 2;
+
+    // split A and B into 4 matrices
+    MatrixWrapper a(A, 0, mid, 0, mid);
+    MatrixWrapper b(A, mid, n, 0, mid);
+    MatrixWrapper c(A, 0, mid, mid, n);
+    MatrixWrapper d(A, mid, n, mid, n);
+
+    MatrixWrapper e(B, 0, mid, 0, mid);
+    MatrixWrapper f(B, mid, n, 0, mid);
+    MatrixWrapper g(B, 0, mid, mid, n);
+    MatrixWrapper h(B, mid, n, mid, n);
+
+    // hold intermediate sums
+    MatrixWrapper s1 = init_matrix_wrapper(mid);
+    MatrixWrapper s2 = init_matrix_wrapper(mid);
+    MatrixWrapper s3 = init_matrix_wrapper(mid);
+    MatrixWrapper s4 = init_matrix_wrapper(mid);
+    MatrixWrapper s5 = init_matrix_wrapper(mid);
+    MatrixWrapper s6 = init_matrix_wrapper(mid);
+    MatrixWrapper s7 = init_matrix_wrapper(mid);
+    MatrixWrapper s8 = init_matrix_wrapper(mid);
+    MatrixWrapper s9 = init_matrix_wrapper(mid);
+    MatrixWrapper s10 = init_matrix_wrapper(mid);
+
+    // hold intermediate products
+    MatrixWrapper p1 = init_matrix_wrapper(mid);
+    MatrixWrapper p2 = init_matrix_wrapper(mid);
+    MatrixWrapper p3 = init_matrix_wrapper(mid);
+    MatrixWrapper p4 = init_matrix_wrapper(mid);
+    MatrixWrapper p5 = init_matrix_wrapper(mid);
+    MatrixWrapper p6 = init_matrix_wrapper(mid);
+    MatrixWrapper p7 = init_matrix_wrapper(mid);
+    update_max_memory();
+
+    // calculate sums
+    sub(f, h, s1);
+    add(a, b, s2);
+    add(c, d, s3);
+    sub(g, e, s4);
+    add(a, d, s5);
+    add(e, h, s6);
+    sub(b, d, s7);
+    add(g, h, s8);
+    sub(a, c, s9);
+    add(e, f, s10);
+
+    // calculate products;
+    samk(a, s1, p1, k);
+    delete_matrix_data(s1._data, mid);
+
+    samk(s2, h, p2, k);
+    delete_matrix_data(s2._data, mid);
+
+    samk(s3, e, p3, k);
+    delete_matrix_data(s3._data, mid);
+
+    samk(d, s4, p4, k);
+    delete_matrix_data(s4._data, mid);
+
+    samk(s5, s6, p5, k);
+    delete_matrix_data(s5._data, mid);
+    delete_matrix_data(s6._data, mid);
+
+    samk(s7, s8, p6, k);
+    delete_matrix_data(s7._data, mid);
+    delete_matrix_data(s8._data, mid);
+
+    samk(s9, s10, p7, k);
+    delete_matrix_data(s9._data, mid);
+    delete_matrix_data(s10._data, mid);
+    
+    //print_matrix(p1);
+    //print_matrix(p2);
+    //print_matrix(p3);
+    //print_matrix(p4);
+    //print_matrix(p5);
+    //print_matrix(p6);
+    //print_matrix(p7);
+
+    // split C into 4 matrices
+    MatrixWrapper c1(C, 0, mid, 0, mid);
+    MatrixWrapper c2(C, mid, n, 0, mid);
+    MatrixWrapper c3(C, 0, mid, mid, n);
+    MatrixWrapper c4(C, mid, n, mid, n);
+
+    // calculate C
+    add(p4, p5, c1);
+    sub(c1, p2, c1);
+    add(c1, p6, c1);
+
+    add(p1, p2, c2);
+
+    add(p3, p4, c3);
+
+    add(p1, p5, c4);
+    sub(c4, p3, c4);
+    sub(c4, p7, c4);
+
+    // clean up p matrices
+    delete_matrix_data(p1._data, mid);
+    delete_matrix_data(p2._data, mid);
+    delete_matrix_data(p3._data, mid);
+    delete_matrix_data(p4._data, mid);
+    delete_matrix_data(p5._data, mid);
+    delete_matrix_data(p6._data, mid);
+    delete_matrix_data(p7._data, mid);
+    update_max_memory();
+}
+/*
 void samk(float** A, float** B, float**& C, int n, int k) {
     
     update_max_memory();
@@ -203,4 +353,44 @@ void samk(float** A, float** B, float**& C, int n, int k) {
     update_max_memory();
     for (int i = 0; i < 4; i++)
         delete_matrix(c[i], n / 2);
+}*/
+
+MatrixWrapper::MatrixWrapper(float** M, int xfrom, int xto, int yfrom, int yto) {
+    _data = M;
+    _xfrom = xfrom;
+    _yfrom = yfrom;
+    _xto = xto;
+    _yto = yto;
+    _width = xto - xfrom;
+    _height = yto - yfrom;
+}
+
+MatrixWrapper::MatrixWrapper(float** M, int width, int height) {
+    _data = M;
+    _xfrom = 0;
+    _yfrom = 0;
+    _xto = width;
+    _yto = height;
+    _width = width;
+    _height = height;
+}
+
+MatrixWrapper::MatrixWrapper(float** M, int width) {
+    _data = M;
+    _xfrom = 0;
+    _yfrom = 0;
+    _xto = width;
+    _yto = width;
+    _width = width;
+    _height = width;
+}
+
+MatrixWrapper::MatrixWrapper(MatrixWrapper M, int xfrom, int xto, int yfrom, int yto) {
+    _data = M._data;
+    _xfrom = M._xfrom + xfrom;
+    _xto = M._xfrom + xto;
+    _yfrom = M._yfrom + yfrom;
+    _yto = M._yfrom + yto;
+    _width = xto - xfrom;
+    _height = yto - yfrom;
 }

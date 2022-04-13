@@ -1,19 +1,36 @@
 #pragma once
 
-void delete_matrix(float** M, int n);
+struct MatrixWrapper {
+	MatrixWrapper(float** M, int xfrom, int xto, int yfrom, int yto);
+	MatrixWrapper(float** M, int width, int height);
+	MatrixWrapper(float** M, int width);
+	MatrixWrapper(MatrixWrapper M, int xfrom, int xto, int yfrom, int yto);
 
-void print_matrix(float** M, int n);
+	int _xfrom, _xto, _yfrom, _yto;
+	int _width, _height;
+	float** _data;
+};
 
-void add(float** A, float** B, float**& C, int n);
+void delete_matrix_data(float** M, int n);
 
-void sub(float** A, float** B, float**& C, int n);
+void print_matrix(MatrixWrapper M);
 
-bool compare(float** A, float** B, int n);
+void add(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C);
 
-void randomize_matrix(float**& M, int n);
+MatrixWrapper add(MatrixWrapper A, MatrixWrapper B);
 
-void init_matrix(float**& M, int n);
+void sub(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C);
 
-void bam(float** A, float** B, float**& C, int n);
+bool compare(MatrixWrapper A, MatrixWrapper B);
 
-void samk(float** A, float** B, float**& C, int n, int k);
+void randomize_matrix_data(float**& M, int n);
+
+void init_matrix_data(float**& M, int n);
+
+MatrixWrapper init_matrix_wrapper(int n);
+
+void bam(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C);
+
+void sam(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C);
+
+void samk(MatrixWrapper A, MatrixWrapper B, MatrixWrapper C, int k);

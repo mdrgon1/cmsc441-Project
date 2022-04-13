@@ -1,0 +1,60 @@
+testing time usage for sam
+n = 2
+n = 4
+n = 8
+n = 16
+n = 32
+n = 64
+n = 128
+n = 256
+n = 512
+sam mean times
+0,0,0.2,1,6.4,47.2,351,2402,16793.2,
+sam time std devs
+0,0,0.4,0,0.489898,1.32665,3.63318,46.1389,198.83,
+
+testing percent speedup of samk for n = 512
+k = 8
+k = 16
+k = 32
+k = 64
+k = 128
+k = 256
+k = 512
+samk speedups
+0.97468,0.988805,0.991163,0.991496,0.991425,0.990806,0.989662,
+samk speedups std dev
+0.000438239,0.000338961,0.00050612,0.000707001,0.000857992,0.000162433,0.000318691,
+TIME MEASURED IN CLOCK TICKS, CLOCK_TICKS_PER_SEC = 1000
+
+testing time usage for samk, k = 64
+n = 2
+n = 4
+n = 8
+n = 16
+n = 32
+n = 64
+n = 128
+n = 256
+n = 512
+n = 1024
+testing time usage for bam
+n = 2
+n = 4
+n = 8
+n = 16
+n = 32
+n = 64
+n = 128
+n = 256
+n = 512
+n = 1024
+samk mean times
+0,0,0,0,0,0.4,2.6,20.4,135.6,914.4,
+samk time std devs
+0,0,0,0,0,0.489898,0.489898,0.489898,1.0198,28.6259,
+bam mean times
+0,0,0,0,0,0.3,2.6,20.9,165.8,1629.6,
+bam time std devs
+0,0,0,0,0,0.458258,0.489898,0.538516,2.85657,22.2989,
+TIME MEASURED IN CLOCK TICKS, CLOCK_TICKS_PER_SEC = 1000

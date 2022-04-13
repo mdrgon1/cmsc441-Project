@@ -1,7 +1,2 @@
 ﻿  main.cpp
-  matrix.cpp
-  testing.cpp
-D:\Users\Default\Documents\School stuff\CMSC441\Project\cpp-project\ConsoleApplication1\testing.cpp(111,22): warning C4244: 'initializing': conversion from 'double' to 'clock_t', possible loss of data
-D:\Users\Default\Documents\School stuff\CMSC441\Project\cpp-project\ConsoleApplication1\testing.cpp(146,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
   ConsoleApplication1.vcxproj -> D:\Users\Default\Documents\School stuff\CMSC441\Project\cpp-project\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
